@@ -2,7 +2,7 @@ package pageSummary
 
 class PageSummary(val url:String, val terms:List[String]) {
 	def fracMatching(checkTerm:String):Float = {
-		var matches = for(t<-terms) yield if(checkTerm == t) 1 else 0
+		var matches = for(t<-terms) yield if(checkTerm.toLowerCase() == t.toLowerCase()) 1 else 0
 		var sum = matches.foldRight(0){(x,y)=>x+y}
 		return sum.toFloat/terms.size.toFloat
 	}
