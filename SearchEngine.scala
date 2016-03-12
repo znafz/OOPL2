@@ -7,7 +7,9 @@ import org.apache.http.message._
 import org.apache.http.params._
 import java.net.URL
 import pageSummary.PageSummary
-
+import page.Page
+import page.IndexedPages
+import scala.collection.mutable.ArrayBuffer
 
 object SearchEngine extends App{
 	def fetch(URL: String):String = {
@@ -94,6 +96,10 @@ object SearchEngine extends App{
 
 	//TEST CODE HERE
 	println("teat")
+	var pages = new ArrayBuffer[Page]()
+	pages += Page("http://www.google.com")
+	var test = new IndexedPages(pages)
+
 
 }
 

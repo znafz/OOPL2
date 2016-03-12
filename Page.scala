@@ -1,6 +1,16 @@
 package page
+import org.apache.http._
+import org.apache.http.client.entity._
+import org.apache.http.client.methods._
+import org.apache.http.impl.client._
+import org.apache.http.client.utils._
+import org.apache.http.message._
+import org.apache.http.params._
+import java.net.URL
+
 import pageSummary.PageSummary
 import query.Query
+import query.WeightedQuery
 import searchResults.SearchResults
 import traits.Weighted
 import scala.collection.mutable.ArrayBuffer
@@ -11,6 +21,20 @@ case class Page(val url: String){
 	//Create a Page class [1 pts]. It should have a method url
 	// (or public val url) that evaluates to the URL of the web 
 	//page [1 pts]. You can decide what else goes in the class.
+
+	//copying getTerms and fetch to the page instead of in the searchengine object
+	def getTerms(html:String, func: String=>Boolean):List[String] = {
+		val terms = html.split("[^a-zA-Z0-9]")
+		val clean = terms.toList.filter(x => x!= "")
+		clean.filter(func)
+	}
+	def fetch(URL: String):String = {
+		val httpget = new HttpGet(s"${URL}") //(url + "?" + query)
+		val responsebody = new DefaultHttpClient().execute(httpget, new BasicResponseHandler())
+		responsebody
+	}
+
+	var terms = getTerms(fetch(url), {x=>x.length > 1})
 	
 }
 
@@ -22,21 +46,33 @@ class IndexedPages(pages: ArrayBuffer[Page]) extends Iterable[Page]{
 
 	override def iterator = pages.iterator
 	def numContaining(word:String):Double = {
+		var ret = 0.0
 		//In IndexedPages, define a method numContaining(word: String):
 		//Double that returns the number of pages that contain the given 
 		//word as a whole word at least once [9  pts]. "As a whole word"
 		// means that a page containing only snowflake would not count 
 		//as containing snow, because the whole word does not match
-		0.0
+		for(page <- pages){
+			val ps = new PageSummary(page.url, page.terms)	
+			if(ps.fracMatching(word) > 0.0) ret += 1.0
+		}
+		ret
 	}
 
 	def search(q:Query):SearchResults = {
+		//*****************Blocked until query is completed**************************
+
+
 		//The search results come from pairing a Query with IndexedPages. Thus, 
 		//you should add a method search(q: Query) to the IndexedPages class that
 		// returns a SearchResults object [2 pts]. In the case where q is an instance
 		// of WeightedQuery, the search results should be adjustedaccordingly [4 pts];
 		// the details of how this happens depend upon the scoring method you pick.
-		new SearchResults(q, this)
+		q match{
+			case x:WeightedQuery => new SearchResults(x, this) //should be updated after query is done
+			case _ =>new SearchResults(q, this)
+		}
+		
 	}
 }
 
