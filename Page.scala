@@ -93,4 +93,9 @@ class WeightedIndexedPages(pages: ArrayBuffer[Page]) extends IndexedPages(pages)
 		beforeWeights //<- this is only here so it compiles
 
 	}
+    
+    override def numContaining(word: String): Double = {
+        // Not sure if this is correct
+        sumIf( { (item: Page) => item.terms.contains(word) } )
+    }
 }
