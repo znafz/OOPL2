@@ -34,7 +34,11 @@ trait Augmentable[A] {
 		//complete the add method. It should return false if the item is already in the collection 
 		//(in which case nothing is added) and true if it was a new item (in which case it is 
 		///added to items) [2 pts]
-		if (items.contains(newItem)) false
-        true
+		if(items.contains(newItem)) false
+        else
+        {
+        	items += newItem
+        	true
+        } 
 	}
 }

@@ -10,7 +10,8 @@ import pageSummary.PageSummary
 import page.Page
 import page.IndexedPages
 import scala.collection.mutable.ArrayBuffer
-import traits.Weighted
+import traits._
+import scala.collection.generic.Growable
 
 object SearchEngine extends App{
 	def fetch(URL: String):String = {
@@ -103,11 +104,19 @@ object SearchEngine extends App{
 	var test = new IndexedPages(pages)*/
 
 	//testing weighted
-	case class testWeightedTrait(items:List[Int], weightingFn:Int=>Double) extends Weighted[Int]
+	/*case class testWeightedTrait(items:List[Int], weightingFn:Int=>Double) extends Weighted[Int]
 	val testW = testWeightedTrait(List(6,9,4,20), {x:Int=>1.0/x.toDouble})
 	println("weights: " + testW.weights)
 	println("totalWeight: " + testW.totalWeight)
-	println("sumIf != 20: " + testW.sumIf({_ != 20}))
+	println("sumIf != 20: " + testW.sumIf({_ != 20}))*/
+
+	case class testAugmentable(items:ArrayBuffer[Int]) extends Augmentable[Int]
+	val buf:ArrayBuffer[Int] with Growable[Int] = ArrayBuffer(1,2,3,4)
+	val testA = testAugmentable(buf)
+	println(testA.add(1))
+	println(testA.add(5))
+	println(testA.items)
+
 
 }
 
