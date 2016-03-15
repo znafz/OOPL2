@@ -8,18 +8,23 @@ trait Weighted[A] {
 	def weights:Iterable[Double] = {
 		//Complete the weights function so it returns the weights of each of the items, in order, 
 		//in an Iterable collection [1 pts].
-		List(1,2)
+		items.map(weightingFn)
 	}
 	def totalWeight:Double = {
 		//Complete the totalWeight function to return the sum of the weights of all items [1 pts]
-		-1.0f
+		weights.foldLeft(0.0)(_ + _)
 	}
 	def sumIf(p: A=> Boolean):Double = {
 		//Complete the sumIf functionto return the sum of the weights 
 		//of the items that satisfy the predicate p[4 pts]. For example,
 		// if the items are [3, 4, 5, 6] with weights [0.1, 0.3, 0.5, 0.9], 
 		//and p = { _ > 4}, then sumIf would return 0.5 + 0.9 = 1.4
-		-1.0f
+		var sum:Double = 0.0
+		val itemsAndWeights = items zip weights
+		itemsAndWeights foreach{
+			current => if(p(current._1)) sum += current._2
+		}
+		sum
 	}
 }
 

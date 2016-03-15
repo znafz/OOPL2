@@ -10,6 +10,7 @@ import pageSummary.PageSummary
 import page.Page
 import page.IndexedPages
 import scala.collection.mutable.ArrayBuffer
+import traits.Weighted
 
 object SearchEngine extends App{
 	def fetch(URL: String):String = {
@@ -95,11 +96,18 @@ object SearchEngine extends App{
 
 
 	//TEST CODE HERE
-	println("teat")
+	
+	/*println("teat")
 	var pages = new ArrayBuffer[Page]()
 	pages += Page("http://www.google.com")
-	var test = new IndexedPages(pages)
+	var test = new IndexedPages(pages)*/
 
+	//testing weighted
+	case class testWeightedTrait(items:List[Int], weightingFn:Int=>Double) extends Weighted[Int]
+	val testW = testWeightedTrait(List(6,9,4,20), {x:Int=>1.0/x.toDouble})
+	println("weights: " + testW.weights)
+	println("totalWeight: " + testW.totalWeight)
+	println("sumIf != 20: " + testW.sumIf({_ != 20}))
 
 }
 
