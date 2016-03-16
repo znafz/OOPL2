@@ -70,14 +70,14 @@ object SearchEngine extends App{
     def crawlAndIndex(startURL: String, maxPages: Int, mode: String = "read", weight: Boolean = true): IndexedPages = {
         var numCrawled = 0
 		var URLs = List(startURL) //list of URLS to crawl
-		var pages = ArrayBuffer[Page]() //list of Pages already crawled or yet to crawl
+		var items = ArrayBuffer[Page]() //list of Pages already crawled or yet to crawl
         
         while (numCrawled < maxPages && URLs.size > 0) {
             val URLtoCrawl = URLs.last
             URLs = URLs.init
             val page = new Page(URLtoCrawl)
             if (!pages.contains(page)) {
-                pages += page
+                items += page
                 URLs ++= page.terms
             }
             numCrawled += 1
@@ -85,54 +85,28 @@ object SearchEngine extends App{
         
         if (mode == "read") {
             if (weight == true) {
-                return new WeightedIndexedPages(pages)
+                return new WeightedIndexedPages(items)
             } else {
-                return new IndexedPages(pages)
+                return new IndexedPages(items)
             }
         } else if (mode == "write") {
             if (weight == true) {
-                //return new WeightedIndexedPages(pages) with Augmentable[Page]
-                return new IndexedPages(pages)  // not correct
+                //return new WeightedIndexedPages(items) with Augmentable[Page]
+                return new WeightedIndexedPages(pages)  // not correct
             } else {
-                //return new IndexedPages(pages) with Augmentable[Page]
+                //return new IndexedPages(items) with Augmentable[Page]
                 return new IndexedPages(pages)  // not correct
             }
         } else {
-            return new IndexedPages(pages)  // not correct
+            return new IndexedPages(items)  // not correct
         }
     }
-
-	/*def crawlAndIndex(startURL:String, numPages:Int):List[PageSummary] = {
-		var numCrawled = 0
-		var URLS = List(startURL) //list of URLS to crawl
-		var exploring = List(startURL) //list of URLS alread crawled or yet to crawl
-		var summaries = List[PageSummary]() // list of page summaries to return
-		while(numCrawled < numPages && URLS.size > 0){
-			val URLToCrawl = URLS.last
-			URLS = URLS.init
-			//make a new pagesummary for the current page
-			val newPS = new PageSummary(URLToCrawl, getTerms(fetch(URLToCrawl), {x=>x.length > 1}))
-			var links = getLinks(fetch(URLToCrawl), URLToCrawl)
-			for(link<-links){
-				if(!exploring.contains(link)){
-					exploring = link :: exploring
-					URLS = link :: URLS
-				}
-			}
-			summaries = newPS :: summaries
-			numCrawled += 1
-
-		}
-		return summaries
-	}
-    */
 	
 	def printBest(query : List[String], pages : List[PageSummary]) = {
 		val scores = for(x <- pages) yield (x.url, x.fracMatching(query))
 		for (x <- scores.sortBy(_._2).takeRight(5).reverse) println(x._1 + ": " + x._2.toString)
 	}
-
-
+    
 	//TEST CODE HERE
 	
 	/*var pages = new ArrayBuffer[Page]()

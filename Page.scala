@@ -44,13 +44,13 @@ case class Page(val url: String){
 	
 }
 
-class IndexedPages(pages: ArrayBuffer[Page]) extends Iterable[Page]{
+class IndexedPages(items: ArrayBuffer[Page]) extends Iterable[Page]{
 	//Create an IndexedPages class [1 pts] that holds a group of Pages. 
 	//IndexedPages should extend Iterable[Page] [1 pts] by overriding 
 	//the iterator method [2 pts]. You should use a mutable collection
 	// in the class so you can add pages (discussed later).
 
-	override def iterator = pages.iterator
+	override def iterator = items.iterator
 	def numContaining(word:String):Double = {
 		var ret = 0.0
 		//In IndexedPages, define a method numContaining(word: String):
@@ -58,7 +58,7 @@ class IndexedPages(pages: ArrayBuffer[Page]) extends Iterable[Page]{
 		//word as a whole word at least once [9  pts]. "As a whole word"
 		// means that a page containing only snowflake would not count 
 		//as containing snow, because the whole word does not match
-		for(page <- pages){	
+		for(page <- items){	
 			if(page.terms.contains(word)) ret += 1.0
 		}
 		ret
