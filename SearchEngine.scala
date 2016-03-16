@@ -78,6 +78,7 @@ object SearchEngine extends App{
             val page = new Page(URLtoCrawl)
             if (!items.contains(page)) {
                 items += page
+                println(items)
                 URLs ++= page.terms
             }
             numCrawled += 1
@@ -131,6 +132,8 @@ object SearchEngine extends App{
 	pages += Page("http://www.youtube.com")
 	var test = new WeightedIndexedPages(pages)
 	println(test.numContaining("google"))*/
+    
+    crawlAndIndex("http://en.wikipedia.org", 100)
 
 	var q = new WeightedQuery(List("wikipedia","youtube", "asdfasdf", "asdfasdf", "asdfff", "fff", "google"))
 	var p = new ArrayBuffer[Page]()
