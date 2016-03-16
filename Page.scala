@@ -21,8 +21,8 @@ case class Page(val url: String){
 	//page [1 pts]. You can decide what else goes in the class.
 
 	//copying getTerms and fetch to the page instead of in the searchengine object
-	def getTerms(html:String, func: String=>Boolean):List[String] = {
-		val terms = html.split("[^a-zA-Z0-9]")
+	def getTerms(htmlToClean:String, func: String=>Boolean):List[String] = {
+		val terms = htmlToClean.split("[^a-zA-Z0-9]")
 		val clean = terms.toList.filter(x => x!= "")
 		clean.filter(func)
 	}
@@ -32,7 +32,38 @@ case class Page(val url: String){
 		responsebody
 	}
 
-	val terms = getTerms(fetch(url), {x=>x.length > 1})
+	val html = fetch(url)
+	val terms = getTerms(html, {x=>x.length > 1})
+	val links = {
+		// See http://www.mkyong.com/regular-expressions/how-to-extract-html-links-with-regular-expression/ for explanation of regex
+		val aTagRegex = """(?i)<a([^>]+)>(.+?)</a>""".r
+		val urlRegex = """\s*(?i)href\s*=\s*(\"([^"]*\")|'[^']*'|([^'">\s]+))""".r
+		
+		val opts = for ( a <- aTagRegex findAllMatchIn html ) yield urlRegex.findFirstMatchIn(a.toString)
+		
+		val hrefs = opts collect { case Some(x) => x group 1 }
+		
+		// remove leading and trailing quotes, if any
+		val cleaned = hrefs map { _.stripPrefix("\"").stripPrefix("\'").stripSuffix("\"").stripPrefix("\'") } filter { ! _.startsWith("javascript") }
+		
+		// Use Java's URL class to parse the URL
+		//   and get the full URL string (including implied context)
+		val contextURL = new java.net.URL(url)
+		
+		def getURL(x: String) = {
+          var result = ""
+          try {
+            result = new java.net.URL(contextURL, x).toString()
+          }
+          catch {
+            case e: java.net.MalformedURLException => Unit
+          }
+          result
+        }
+        
+        (cleaned map { getURL(_) } ).filter(_.length > 0).toList
+
+	}
 
 	def numOccurences(word:String):Double = {
 		var sum = 0.0
