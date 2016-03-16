@@ -11,6 +11,7 @@ import page._
 import scala.collection.mutable.ArrayBuffer
 import traits._
 import scala.collection.generic.Growable
+import query._
 
 object SearchEngine extends App{
 	def fetch(URL: String):String = {
@@ -133,10 +134,10 @@ object SearchEngine extends App{
 
 	//TEST CODE HERE
 	
-	/*println("teat")
-	var pages = new ArrayBuffer[Page]()
+	/*var pages = new ArrayBuffer[Page]()
 	pages += Page("http://www.google.com")
-	var test = new IndexedPages(pages)*/
+	var test = new IndexedPages(pages)
+	println(test.numContaining("google"))*/
 
 	//testing weighted
 	/*case class testWeightedTrait(items:List[Int], weightingFn:Int=>Double) extends Weighted[Int]
@@ -145,14 +146,21 @@ object SearchEngine extends App{
 	println("totalWeight: " + testW.totalWeight)
 	println("sumIf != 20: " + testW.sumIf({_ != 20}))*/
 
-	case class testAugmentable(items:ArrayBuffer[Int]) extends Augmentable[Int]
+	/*case class testAugmentable(items:ArrayBuffer[Int]) extends Augmentable[Int]
 	val buf:ArrayBuffer[Int] with Growable[Int] = ArrayBuffer(1,2,3,4)
 	val testA = testAugmentable(buf)
 	println(testA.add(1))
 	println(testA.add(5))
-	println(testA.items)
+	println(testA.items)*/
 
+	/*var pages = new ArrayBuffer[Page]()
+	pages += Page("http://www.google.com")
+	pages += Page("http://www.youtube.com")
+	var test = new WeightedIndexedPages(pages)
+	println(test.numContaining("google"))*/
 
+	var q = new WeightedQuery(List("1","2","3"))
+	println(q.weights)
 }
 
 

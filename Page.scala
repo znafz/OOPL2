@@ -7,8 +7,6 @@ import org.apache.http.client.utils._
 import org.apache.http.message._
 import org.apache.http.params._
 import java.net.URL
-
-import pageSummary.PageSummary
 import query.Query
 import query.WeightedQuery
 import searchResults.SearchResults
@@ -52,9 +50,8 @@ class IndexedPages(pages: ArrayBuffer[Page]) extends Iterable[Page]{
 		//word as a whole word at least once [9  pts]. "As a whole word"
 		// means that a page containing only snowflake would not count 
 		//as containing snow, because the whole word does not match
-		for(page <- pages){
-			val ps = new PageSummary(page.url, page.terms)	
-			if(ps.fracMatching(word) > 0.0) ret += 1.0
+		for(page <- pages){	
+			if(page.terms.contains(word)) ret += 1.0
 		}
 		ret
 	}
@@ -76,9 +73,8 @@ class IndexedPages(pages: ArrayBuffer[Page]) extends Iterable[Page]{
 	}
 }
 
-class WeightedIndexedPages(pages: ArrayBuffer[Page]) extends IndexedPages(pages) with Weighted[Page]{
-	val weightingFn = (x:Page)=>1.0/x.url.length //not sure if this is valid or not
-	val items = pages //not sure if this is correct either
+class WeightedIndexedPages(val items: ArrayBuffer[Page]) extends IndexedPages(items) with Weighted[Page]{
+	val weightingFn = (x:Page)=>1.0/x.url.length 
 	override def search(q:Query) : SearchResults = {
 		//most of this is given to us in the spec
 		val beforeWeights: SearchResults = super.search(q)    
@@ -95,7 +91,6 @@ class WeightedIndexedPages(pages: ArrayBuffer[Page]) extends IndexedPages(pages)
 	}
     
     override def numContaining(word: String): Double = {
-        // Not sure if this is correct
         sumIf( { (item: Page) => item.terms.contains(word) } )
     }
 }
