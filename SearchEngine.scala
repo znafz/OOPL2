@@ -70,7 +70,7 @@ object SearchEngine extends App{
     def crawlAndIndex(startURL: String, maxPages: Int, mode: String = "read", weight: Boolean = true): IndexedPages = {
         var numCrawled = 0
 		var URLs = List(startURL) //list of URLS to crawl
-		var items = ArrayBuffer[Page]() //list of Pages already crawled or yet to crawl
+		var items = ArrayBuffer[Page]() //list of Pages already crawled
         
         while (numCrawled < maxPages && URLs.size > 0) {
             val URLtoCrawl = URLs.last
@@ -78,7 +78,7 @@ object SearchEngine extends App{
             val page = new Page(URLtoCrawl)
             if (!items.contains(page)) {
                 items += page
-                URLs ++= page.terms
+                URLs ++= page.links
             }
             numCrawled += 1
         }
@@ -132,14 +132,17 @@ object SearchEngine extends App{
 	var test = new WeightedIndexedPages(pages)
 	println(test.numContaining("google"))*/
 
-	var q = new WeightedQuery(List("wikipedia","youtube", "asdfasdf", "asdfasdf", "asdfff", "fff", "google"))
+	/*var q = new WeightedQuery(List("wikipedia","youtube", "asdfasdf", "asdfasdf", "asdfff", "fff", "google"))
 	var p = new ArrayBuffer[Page]()
 	p += Page("http://www.wikipedia.org")
 	p += Page("http://www.youtube.com")
 	p += Page("http://www.google.com")
 	var test = new WeightedIndexedPages(p)
 	var s = test.search(q)
-	s.printTop(2)
+	s.printTop(2)*/
+
+	var p = new Page("http://www.google.com")
+	println(p.links)
 }
 
 
