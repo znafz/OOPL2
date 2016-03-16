@@ -44,7 +44,7 @@ case class Page(val url: String){
 	
 }
 
-class IndexedPages(items: ArrayBuffer[Page]) extends Iterable[Page]{
+class IndexedPages(val items: ArrayBuffer[Page]) extends Iterable[Page]{
 	//Create an IndexedPages class [1 pts] that holds a group of Pages. 
 	//IndexedPages should extend Iterable[Page] [1 pts] by overriding 
 	//the iterator method [2 pts]. You should use a mutable collection
@@ -76,7 +76,7 @@ class IndexedPages(items: ArrayBuffer[Page]) extends Iterable[Page]{
 	}
 }
 
-class WeightedIndexedPages(val items: ArrayBuffer[Page]) extends IndexedPages(items) with Weighted[Page]{
+class WeightedIndexedPages(override val items: ArrayBuffer[Page]) extends IndexedPages(items) with Weighted[Page]{
 	val weightingFn = (x:Page)=>1.0/x.url.length 
 	override def search(q:Query) : SearchResults = {
 		val beforeWeights: SearchResults = super.search(q)    

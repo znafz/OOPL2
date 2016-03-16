@@ -76,7 +76,7 @@ object SearchEngine extends App{
             val URLtoCrawl = URLs.last
             URLs = URLs.init
             val page = new Page(URLtoCrawl)
-            if (!pages.contains(page)) {
+            if (!items.contains(page)) {
                 items += page
                 URLs ++= page.terms
             }
@@ -89,16 +89,14 @@ object SearchEngine extends App{
             } else {
                 return new IndexedPages(items)
             }
-        } else if (mode == "write") {
+        } else if (mode == "augment") {
             if (weight == true) {
-                //return new WeightedIndexedPages(items) with Augmentable[Page]
-                return new WeightedIndexedPages(pages)  // not correct
+            	return new WeightedIndexedPages(items) with Augmentable[Page]
             } else {
-                //return new IndexedPages(items) with Augmentable[Page]
-                return new IndexedPages(pages)  // not correct
+                return new IndexedPages(items) with Augmentable[Page]
             }
         } else {
-            return new IndexedPages(items)  // not correct
+            return new IndexedPages(items) //default
         }
     }
 	
@@ -135,11 +133,11 @@ object SearchEngine extends App{
 	println(test.numContaining("google"))*/
 
 	var q = new WeightedQuery(List("wikipedia","youtube", "asdfasdf", "asdfasdf", "asdfff", "fff", "google"))
-	var pages = new ArrayBuffer[Page]()
-	pages += Page("http://www.wikipedia.org")
-	pages += Page("http://www.youtube.com")
-	pages += Page("http://www.google.com")
-	var test = new WeightedIndexedPages(pages)
+	var p = new ArrayBuffer[Page]()
+	p += Page("http://www.wikipedia.org")
+	p += Page("http://www.youtube.com")
+	p += Page("http://www.google.com")
+	var test = new WeightedIndexedPages(p)
 	var s = test.search(q)
 	s.printTop(2)
 }
