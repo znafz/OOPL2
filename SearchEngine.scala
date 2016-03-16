@@ -145,9 +145,22 @@ object SearchEngine extends App{
 	var s = test.search(q)
 	s.printTop(2)*/
 
-	var p = new Page("http://www.google.com")
-	println(p.links)
+	//based off http://stackoverflow.com/questions/9160001/how-to-profile-methods-in-scala
+	def time[R](block: => R): R = {
+	    val t0 = System.nanoTime()
+	    val result = block    
+	    val t1 = System.nanoTime()
+	    println("Elapsed time: " + (t1 - t0) + "ns")
+	    result
+	}
+
+	time{
+		var p = crawlAndIndex("https://twitter.com/odersky",  500)
+		var s = p.search(new Query(List("functional", "programming", "is", "great")))
+		s.printTop(50)
+	}
 }
+
 
 
 
