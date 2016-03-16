@@ -134,13 +134,13 @@ object SearchEngine extends App{
 	var test = new WeightedIndexedPages(pages)
 	println(test.numContaining("google"))*/
 
-	var q = new Query(List("google","youtube","apple"))
+	var q = new WeightedQuery(List("wikipedia","youtube", "asdfasdf", "asdfasdf", "asdfff", "fff", "google"))
 	var pages = new ArrayBuffer[Page]()
-	pages += Page("http://www.wikipedia.com")
+	pages += Page("http://www.wikipedia.org")
 	pages += Page("http://www.youtube.com")
-	pages += Page("http://www.google.org")
-	var test = new IndexedPages(pages)
-	var s = new SearchResults(q, test)
+	pages += Page("http://www.google.com")
+	var test = new WeightedIndexedPages(pages)
+	var s = test.search(q)
 	s.printTop(2)
 }
 

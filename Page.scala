@@ -65,18 +65,13 @@ class IndexedPages(items: ArrayBuffer[Page]) extends Iterable[Page]{
 	}
 
 	def search(q:Query):SearchResults = {
-		//*****************Blocked until query is completed**************************
-
-
 		//The search results come from pairing a Query with IndexedPages. Thus, 
 		//you should add a method search(q: Query) to the IndexedPages class that
 		// returns a SearchResults object [2 pts]. In the case where q is an instance
 		// of WeightedQuery, the search results should be adjustedaccordingly [4 pts];
 		// the details of how this happens depend upon the scoring method you pick.
-		q match{
-			case x:WeightedQuery => new SearchResults(x, this) //should be updated after query is done
-			case _ =>new SearchResults(q, this)
-		}
+		//weighted queries are handled in the SearchResults class for our implementation
+		new SearchResults(q, this)
 		
 	}
 }
@@ -84,7 +79,6 @@ class IndexedPages(items: ArrayBuffer[Page]) extends Iterable[Page]{
 class WeightedIndexedPages(val items: ArrayBuffer[Page]) extends IndexedPages(items) with Weighted[Page]{
 	val weightingFn = (x:Page)=>1.0/x.url.length 
 	override def search(q:Query) : SearchResults = {
-		//most of this is given to us in the spec
 		val beforeWeights: SearchResults = super.search(q)    
 		val oldScores = beforeWeights.results.unzip._1    
 		val unnormScores = oldScores.zip(weights).map { (x) => (x._1 * x._2) }    
@@ -94,7 +88,9 @@ class WeightedIndexedPages(val items: ArrayBuffer[Page]) extends IndexedPages(it
 		val total = unnormScores.foldLeft(0.0) {_+_}    
 		val newScores = unnormScores.map { _ / total }    
 		// TODO: create and return adjusted SearchResultsfrom newScores [4 pts]
-		beforeWeights //<- this is only here so it compiles
+		var newResults:Vector[(Double, String)] = Vector() ++ newScores.zip(beforeWeights.results.unzip._2)
+		newResults = newResults.sortWith( _._1 > _._1 )
+		new SearchResults(q, this, newResults)
 
 	}
     
