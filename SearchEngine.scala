@@ -12,6 +12,7 @@ import scala.collection.mutable.ArrayBuffer
 import traits._
 import scala.collection.generic.Growable
 import query._
+import searchResults._
 
 object SearchEngine extends App{
 	def fetch(URL: String):String = {
@@ -159,8 +160,14 @@ object SearchEngine extends App{
 	var test = new WeightedIndexedPages(pages)
 	println(test.numContaining("google"))*/
 
-	var q = new WeightedQuery(List("1","2","3"))
-	println(q.weights)
+	var q = new Query(List("google","youtube","apple"))
+	var pages = new ArrayBuffer[Page]()
+	pages += Page("http://www.wikipedia.com")
+	pages += Page("http://www.youtube.com")
+	pages += Page("http://www.google.org")
+	var test = new IndexedPages(pages)
+	var s = new SearchResults(q, test)
+	s.printTop(2)
 }
 
 

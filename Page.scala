@@ -32,7 +32,15 @@ case class Page(val url: String){
 		responsebody
 	}
 
-	var terms = getTerms(fetch(url), {x=>x.length > 1})
+	val terms = getTerms(fetch(url), {x=>x.length > 1})
+
+	def numOccurences(word:String):Double = {
+		var sum = 0.0
+		for(term <- terms){
+			if(term == word) sum += 1.0
+		}
+		sum
+	}
 	
 }
 
