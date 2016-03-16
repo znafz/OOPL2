@@ -7,8 +7,7 @@ import org.apache.http.message._
 import org.apache.http.params._
 import java.net.URL
 import pageSummary.PageSummary
-import page.Page
-import page.IndexedPages
+import page._
 import scala.collection.mutable.ArrayBuffer
 import traits._
 import scala.collection.generic.Growable
@@ -65,8 +64,43 @@ object SearchEngine extends App{
 	// previous project.mode should be "read" or   "augment": for "read", 
 	//no mixins are needed; for "augment", 
 	//Augmentable should be mixed in to the returned object [4 pts].
+    
+    def crawlAndIndex(startURL: String, maxPages: Int, mode: String = "read", weight: Boolean = true): IndexedPages = {
+        var numCrawled = 0
+		var URLs = List(startURL) //list of URLS to crawl
+		var pages = ArrayBuffer[Page]() //list of Pages already crawled or yet to crawl
+        
+        while (numCrawled < maxPages && URLs.size > 0) {
+            val URLtoCrawl = URLs.last
+            URLs = URLs.init
+            val page = new Page(URLtoCrawl)
+            if (!pages.contains(page)) {
+                pages += page
+                URLs ++= page.terms
+            }
+            numCrawled += 1
+        }
+        
+        if (mode == "read") {
+            if (weight == true) {
+                return new WeightedIndexedPages(pages)
+            } else {
+                return new IndexedPages(pages)
+            }
+        } else if (mode == "write") {
+            if (weight == true) {
+                //return new WeightedIndexedPages(pages) with Augmentable[Page]
+                return new IndexedPages(pages)  // not correct
+            } else {
+                //return new IndexedPages(pages) with Augmentable[Page]
+                return new IndexedPages(pages)  // not correct
+            }
+        } else {
+            return new IndexedPages(pages)  // not correct
+        }
+    }
 
-	def crawlAndIndex(startURL:String, numPages:Int):List[PageSummary] = {
+	/*def crawlAndIndex(startURL:String, numPages:Int):List[PageSummary] = {
 		var numCrawled = 0
 		var URLS = List(startURL) //list of URLS to crawl
 		var exploring = List(startURL) //list of URLS alread crawled or yet to crawl
@@ -89,6 +123,7 @@ object SearchEngine extends App{
 		}
 		return summaries
 	}
+    */
 	
 	def printBest(query : List[String], pages : List[PageSummary]) = {
 		val scores = for(x <- pages) yield (x.url, x.fracMatching(query))
