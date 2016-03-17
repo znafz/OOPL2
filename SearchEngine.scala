@@ -73,13 +73,13 @@ object SearchEngine extends App{
 		var items = ArrayBuffer[Page]() //list of Pages already crawled
         
         while (numCrawled < maxPages && URLs.size > 0) {
-            val URLtoCrawl = URLs.last
-            URLs = URLs.init
+            val URLtoCrawl = URLs(numCrawled)
+            //URLs = URLs.init
             val page = new Page(URLtoCrawl)
             if (!items.contains(page)) {
                 items += page
                 println(items)
-                URLs ++= page.terms
+                //URLs ++= page.terms
                 URLs ++= page.links
             }
             numCrawled += 1
@@ -134,7 +134,7 @@ object SearchEngine extends App{
 	var test = new WeightedIndexedPages(pages)
 	println(test.numContaining("google"))*/
     
-    crawlAndIndex("http://en.wikipedia.org", 100)
+    //crawlAndIndex("http://en.wikipedia.org", 100)
 
 	/*var q = new WeightedQuery(List("wikipedia","youtube", "asdfasdf", "asdfasdf", "asdfff", "fff", "google"))
 	var p = new ArrayBuffer[Page]()
@@ -155,8 +155,8 @@ object SearchEngine extends App{
 	}
 
 	time{
-		var p = crawlAndIndex("https://twitter.com/odersky",  500)
-		var s = p.search(new Query(List("functional", "programming", "is", "great")))
+		var p = crawlAndIndex("http://www.lihaoyi.com/post/StrategicScalaStylePrincipleofLeastPower.html",  50)
+		var s = p.search(new Query(List("the", "best", "piece")))
 		s.printTop(50)
 	}
 }
