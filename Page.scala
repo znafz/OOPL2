@@ -49,7 +49,7 @@ case class Page(val url: String){
 		val hrefs = opts collect { case Some(x) => x group 1 }
 		
 		// remove leading and trailing quotes, if any
-		val cleaned = hrefs.toStream map{ _.stripPrefix("\"").stripPrefix("\'").stripSuffix("\"").stripPrefix("\'").split("\\?")(0).split("#")(0) } filter { ! _.startsWith("javascript") } 
+		val cleaned = hrefs.toStream.par map{ _.stripPrefix("\"").stripPrefix("\'").stripSuffix("\"").stripPrefix("\'").split("\\?")(0).split("#")(0) } filter { ! _.startsWith("javascript") } 
 		
 		// Use Java's URL class to parse the URL
 		//   and get the full URL string (including implied context)
