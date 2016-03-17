@@ -24,11 +24,11 @@ case class Page(val url: String){
 	//copying getTerms and fetch to the page instead of in the searchengine object
 	def getTerms(htmlToClean:String, func: String=>Boolean):List[String] = {
 		val terms = htmlToClean.split("[^a-zA-Z0-9]")
-		val clean = terms.toList.filter({
+		val clean = terms.toList.par.filter({
 			case x if x.length < 2 => false
 			case x if STOP_WORDS.contains(x) => false
 			case _ => true
-			})
+			}).toList
 		clean.filter(func)
 	}
 	def fetch(URL: String):String = {
@@ -49,7 +49,7 @@ case class Page(val url: String){
 		val hrefs = opts collect { case Some(x) => x group 1 }
 		
 		// remove leading and trailing quotes, if any
-		val cleaned = hrefs map { _.stripPrefix("\"").stripPrefix("\'").stripSuffix("\"").stripPrefix("\'") } filter { ! _.startsWith("javascript") } filter { ! _.contains("?") } filter { ! _.contains("#") }
+		val cleaned = hrefs.toStream map{ _.stripPrefix("\"").stripPrefix("\'").stripSuffix("\"").stripPrefix("\'").split("\\?")(0).split("#")(0) } filter { ! _.startsWith("javascript") } 
 		
 		// Use Java's URL class to parse the URL
 		//   and get the full URL string (including implied context)
