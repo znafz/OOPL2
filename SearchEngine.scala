@@ -73,8 +73,8 @@ object SearchEngine extends App{
 		var items = ArrayBuffer[Page]() //list of Pages already crawled
         
         while (numCrawled < maxPages && URLs.size > 0) {
-            val URLtoCrawl = URLs.last
-            URLs = URLs.init
+            val URLtoCrawl = URLs(numCrawled)
+            //URLs = URLs.init
             val page = new Page(URLtoCrawl)
             if (!items.contains(page)) {
                 items += page
@@ -132,7 +132,7 @@ object SearchEngine extends App{
 	var test = new WeightedIndexedPages(pages)
 	println(test.numContaining("google"))*/
     
-    crawlAndIndex("http://en.wikipedia.org", 100)
+    //crawlAndIndex("http://en.wikipedia.org", 100)
 
 	/*var q = new WeightedQuery(List("wikipedia","youtube", "asdfasdf", "asdfasdf", "asdfff", "fff", "google"))
 	var p = new ArrayBuffer[Page]()
@@ -144,6 +144,7 @@ object SearchEngine extends App{
 	s.printTop(2)*/
 
 	//based off http://stackoverflow.com/questions/9160001/how-to-profile-methods-in-scala
+	//used for testing
 	def time[R](block: => R): R = {
 	    val t0 = System.nanoTime()
 	    val result = block    
@@ -152,11 +153,11 @@ object SearchEngine extends App{
 	    result
 	}
 
-	
-
-	val p = new Page("http://www.wikipedia.org")
-	println(p.terms.size)
-
+	time{
+		var p = crawlAndIndex("http://www.lihaoyi.com/post/StrategicScalaStylePrincipleofLeastPower.html",  50)
+		var s = p.search(new Query(List("the", "best", "piece")))
+		s.printTop(50)
+	}
 }
 
 
