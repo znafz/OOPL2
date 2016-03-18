@@ -73,7 +73,7 @@ object SearchEngine extends App{
 		var items = ArrayBuffer[Page]() //list of Pages already crawled
         
         while (numCrawled < maxPages && URLs.size > 0) {
-            val URLtoCrawl = URLs(numCrawled)
+            val URLtoCrawl = URLs(numCrawled)//randomizes searching by jumping some...hope 5 links are loaded per page avg :)
             //URLs = URLs.init
             val page = new Page(URLtoCrawl)
             if (!items.contains(page)) {

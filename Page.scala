@@ -13,6 +13,7 @@ import query.WeightedQuery
 import searchResults.SearchResults
 import traits.Weighted
 import scala.collection.mutable.ArrayBuffer
+import scala.util.control.Breaks._
 
 
 case class Page(val url: String){
@@ -44,6 +45,12 @@ case class Page(val url: String){
 				println("http exception occured at " + URL)
 				responsebody = ""
 				e.toString()
+			}
+			case q: Exception => {
+				println("unknown exception hit at " + URL)
+				responsebody = ""
+				q.printStackTrace()
+				q.toString()
 			}
 		}
 	}
@@ -87,6 +94,16 @@ case class Page(val url: String){
 			if(term == word) sum += 1.0
 		}
 		sum
+	}
+
+	//relies on other scoring parts to catch no-match scenarios.  If no match, index = #terms + 1
+	def firstSuccess(word:String):Double = {
+		var firstIndex = 1
+		breakable { for(term <- terms) {
+			if(term == word) break
+			firstIndex += 1
+		}}
+		firstIndex
 	}
 
 
