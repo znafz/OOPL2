@@ -154,9 +154,9 @@ object SearchEngine extends App{
 	}
 
 	time{
-		var p = crawlAndIndex("https://www.google.com/",  100)
-		//var s = p.search(new Query(List("the", "best", "piece")))
-		//s.printTop(50)
+		var p = crawlAndIndex("https://twitter.com/odersky",  300)
+		var s = p.search(new Query(List("functional", "programming", "great")))
+		s.printTop(50)
 	}
 }
 

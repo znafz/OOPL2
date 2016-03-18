@@ -43,7 +43,8 @@ class SearchResults(query:Query, pages:IndexedPages, val results:Iterable[(Doubl
 		for (page <- pages){
 			var score = 0.0
 			for(term <- query.items){
-				score += (page.numOccurences(term) * termWeightsMap(term))/page.terms.size
+
+				score += ((page.numOccurences(term) * termWeightsMap(term))/page.terms.size) * scala.math.log(pages.size/(1/* preventing division by zero*/+pages.numContaining(term)))
 			}
 			ret = ret :+ (score, page.url)
 		}
