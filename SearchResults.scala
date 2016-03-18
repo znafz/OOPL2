@@ -70,7 +70,7 @@ class SearchResults(query:Query, pages:IndexedPages, val results:Iterable[(Doubl
 				var numOccurencesOfTerm: Double = page.numOccurences(term)
 				if(page.numOccurences(term) > 0) numTermsHas += 1
 				//score = num term occurences / num overall occurences * /*(1/cube root of page len)*/ (ln(500)/ln(pagelen)) * term weight * (1/num pages that have term) * (num term occurences/ pagelen) * num term occurences * how early the term is hit in the document (first quarter = bonus)
-				score += (numOccurencesOfTerm / totalTermCounts(counter)) * /*scala.math.pow((1/page.terms.size.toDouble), 1.toDouble/3)*/ termWeightsMap(term) * (1.toDouble / numPageHits(counter)) * (numOccurencesOfTerm / page.terms.size) * numOccurencesOfTerm * scala.math.pow(page.terms.size.toDouble/(4*page.firstSuccess(term)),0.1)
+				score += (numOccurencesOfTerm / totalTermCounts(counter)) * /*scala.math.pow((1/page.terms.size.toDouble), 1.toDouble/3)*/ termWeightsMap(term) * scala.math.log(1.toDouble / numPageHits(counter)) * (numOccurencesOfTerm / page.terms.size) /** numOccurencesOfTerm */* scala.math.pow(page.terms.size.toDouble/(4*page.firstSuccess(term)),0.3)
 				//score += ((page.numOccurences(term) * termWeightsMap(term))/page.terms.size) * scala.math.log(pages.size/(1/* preventing division by zero*/+pages.numContaining(term)))
 				counter += 1
 			}
@@ -78,7 +78,7 @@ class SearchResults(query:Query, pages:IndexedPages, val results:Iterable[(Doubl
 			if(page.terms.size < 500) {
 				score *= scala.math.pow((page.terms.size.toDouble / 500), 2)
 			} else {//slight penalty to long results
-				score *= scala.math.log1p(500.toDouble).toDouble / scala.math.log1p(page.terms.size.toDouble)
+				//score *= scala.math.log1p(1000.toDouble).toDouble / scala.math.log1p(page.terms.size.toDouble)
 			}
 			score *= scala.math.pow((numTermsHas/query.items.size), 2)//adjust for not having every term
 			ret = ret :+ (score, page.url)

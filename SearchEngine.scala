@@ -156,7 +156,7 @@ object SearchEngine extends App{
 
 	time{
 		var p = crawlAndIndex("https://en.wikipedia.org/wiki/Cambridge",  300)
- 		var s = p.search(new WeightedQuery(List("river", "war", "east")))
+		var s = p.search(new Query(List("river", "war", "east")))
  		s.printTop(15)
 	}
 }
