@@ -155,10 +155,9 @@ object SearchEngine extends App{
 	}
 
 	time{
-		var p = crawlAndIndex("https://twitter.com/odersky",  300)
-		var s = p.search(new Query(List("functional", "programming", "great")))
-		s.printTop(10)
-
+		var p = crawlAndIndex("https://en.wikipedia.org/wiki/Cambridge",  300)
+ 		var s = p.search(new WeightedQuery(List("river", "war", "east")))
+ 		s.printTop(15)
 	}
 }
 

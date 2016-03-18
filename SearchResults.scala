@@ -1,6 +1,7 @@
 package searchResults
 import query._
 import page.IndexedPages
+import scala.collection.mutable.ArrayBuffer
 
 class SearchResults(query:Query, pages:IndexedPages, val results:Iterable[(Double,String)]){
 
@@ -40,12 +41,43 @@ class SearchResults(query:Query, pages:IndexedPages, val results:Iterable[(Doubl
 			case _ => query.items.foreach{termWeightsMap(_) = 1.0}
 		}
 		
+		var totalTermCounts = ArrayBuffer[Double]()//total instances of each term across pages
+		var numPageHits = ArrayBuffer[Double]()//number of pages with each term
+		var counter = 0 //index of term being checked/ used
+		//store a list of total occurences of the term in every page
+		for (item <- query.items) {
+			totalTermCounts += 0.0
+			numPageHits += 0.0
+			totalTermCounts(counter) = 1.0//prevent div by 0
+			numPageHits(counter) = 1.0//prevent div by 0
+			counter += 1
+		}
+		//have to run this for loop twice for it to work. Once to set totals BEFORE calculating scores, and once to get scores
+		for (page <- pages) {
+			counter = 0
+			for(term <- query.items) {
+				totalTermCounts(counter) += page.numOccurences(term)
+				if(page.numOccurences(term) > 0) numPageHits(counter) += 1
+				counter += 1
+			}
+		}
+
 		for (page <- pages){
 			var score = 0.0
+			var numTermsHas: Double = 0.0
+			counter = 0
 			for(term <- query.items){
-
-				score += ((page.numOccurences(term) * termWeightsMap(term))/page.terms.size) * scala.math.log(pages.size/(1/* preventing division by zero*/+pages.numContaining(term)))
+				if(page.numOccurences(term) > 0) numTermsHas += 1
+				//score = num term occurences / num overall occurences * (1/cube root of page len) * term weight * (1/num pages that have term) * (num term occurences/ pagelen) * num term occurences
+				score += (page.numOccurences(term) / totalTermCounts(counter)) * scala.math.pow((1/page.terms.size.toDouble), 1.toDouble/3) * termWeightsMap(term) * (1.toDouble / numPageHits(counter)) * (page.numOccurences(term).toDouble / page.terms.size) * totalTermCounts(counter)
+				//score += ((page.numOccurences(term) * termWeightsMap(term))/page.terms.size) * scala.math.log(pages.size/(1/* preventing division by zero*/+pages.numContaining(term)))
+				counter += 1
 			}
+			//if pagelen < 500, score *= sqrt(pagelen/500) to penalize it
+			if(page.terms.size < 500) {
+				score *= scala.math.pow((page.terms.size.toDouble / 500), 2)
+			}
+			score *= scala.math.pow((numTermsHas/query.items.size), 2)//adjust for not having every term
 			ret = ret :+ (score, page.url)
 		}
 		ret.sortWith( _._1 > _._1 )
