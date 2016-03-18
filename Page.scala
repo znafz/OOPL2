@@ -6,6 +6,7 @@ import org.apache.http.impl.client._
 import org.apache.http.client.utils._
 import org.apache.http.message._
 import org.apache.http.params._
+import org.apache.http.client.HttpResponseException
 import java.net.URL
 import query.Query
 import query.WeightedQuery
@@ -32,9 +33,19 @@ case class Page(val url: String){
 		clean.filter(func)
 	}
 	def fetch(URL: String):String = {
+		var responsebody : String = ""
 		val httpget = new HttpGet(s"${URL}") //(url + "?" + query)
-		val responsebody = new DefaultHttpClient().execute(httpget, new BasicResponseHandler())
-		responsebody
+		try {
+			responsebody = new DefaultHttpClient().execute(httpget, new BasicResponseHandler())
+			responsebody
+		} catch {
+			case e: org.apache.http.client.HttpResponseException => {
+				//e.printStackTrace()
+				println("http exception occured at " + URL)
+				responsebody = ""
+				e.toString()
+			}
+		}
 	}
 
 	val html = fetch(url)
