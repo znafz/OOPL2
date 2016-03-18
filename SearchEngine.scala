@@ -78,6 +78,7 @@ object SearchEngine extends App{
             val page = new Page(URLtoCrawl)
             if (!items.contains(page)) {
                 items += page
+                //println(items)
                 URLs ++= page.links
             }
             numCrawled += 1
@@ -156,7 +157,8 @@ object SearchEngine extends App{
 	time{
 		var p = crawlAndIndex("https://twitter.com/odersky",  300)
 		var s = p.search(new Query(List("functional", "programming", "great")))
-		s.printTop(50)
+		s.printTop(10)
+
 	}
 }
 

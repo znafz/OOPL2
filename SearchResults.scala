@@ -8,7 +8,7 @@ class SearchResults(query:Query, pages:IndexedPages, val results:Iterable[(Doubl
 		//SearchResults should also have a printTop(n: Int): Unit methodthat prints
 		// the top n results to the console, one on each line, first the score, 
 		//then the URL [2 pts].
-		for(res <- results.slice(0,n)){println(s"${res._1} : ${res._2}")}
+		for(res <- results.slice(0,n)){ if(res._1 > 0.0) println(s"${res._1} : ${res._2}")}
 
 	}
 	
